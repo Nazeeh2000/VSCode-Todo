@@ -1,11 +1,12 @@
 import * as vscode from 'vscode';
+import { HelloWorldPanel } from './HelloWorldPanel';
 
 export function activate(context: vscode.ExtensionContext) {
   console.log('Congratulations, your extension "vstodo" is now active!');
 
   context.subscriptions.push(
     vscode.commands.registerCommand('vstodo.helloWorld', () => {
-      vscode.window.showInformationMessage('World from VSTodo Nazeeh!');
+      HelloWorldPanel.createOrShow(context.extensionUri);
     })
   );
 
@@ -16,6 +17,12 @@ export function activate(context: vscode.ExtensionContext) {
         'good',
         'bad'
       );
+      if (answer === 'bad') {
+        vscode.window.showInformationMessage('Sorry to hear that!');
+      } else {
+        console.log(answer);
+        vscode.window.showInformationMessage('Good to hear that');
+      }
     })
   );
 }
