@@ -1,8 +1,17 @@
 import * as vscode from 'vscode';
 import { HelloWorldPanel } from './HelloWorldPanel';
+import { SidebarProvider } from './SidebarProvider';
 
 export function activate(context: vscode.ExtensionContext) {
-  console.log('Congratulations, your extension "vstodo" is now active!');
+  // console.log('Congratulations, your extension "vstodo" is now active!');
+
+  const sidebarProvider = new SidebarProvider(context.extensionUri);
+  context.subscriptions.push(
+    vscode.window.registerWebviewViewProvider(
+      "vstodo-sidebar",
+      sidebarProvider
+    )
+  );
 
   context.subscriptions.push(
     vscode.commands.registerCommand('vstodo.helloWorld', () => {
@@ -11,14 +20,16 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   context.subscriptions.push(
-    vscode.commands.registerCommand('vstodo.refresh', () => {
-      HelloWorldPanel.kill();
-      HelloWorldPanel.createOrShow(context.extensionUri);
-      setTimeout(() => {
-        vscode.commands.executeCommand(
-          'workbench.action.webview.openDeveloperTools'
-        );
-      }, 500);
+    vscode.commands.registerCommand('vstodo.refresh', async () => {
+      // HelloWorldPanel.kill();
+      // HelloWorldPanel.createOrShow(context.extensionUri);
+      await vscode.commands.executeCommand("workbench.action.closeSidebar");
+      await vscode.commands.executeCommand("workbench.view.extension.vstodo-sidebar-view");
+      // setTimeout(() => {
+      //   vscode.commands.executeCommand(
+      //     'workbench.action.webview.openDeveloperTools'
+      //   );
+      // }, 500);
     })
   );
 
