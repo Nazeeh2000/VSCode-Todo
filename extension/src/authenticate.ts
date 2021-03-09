@@ -3,7 +3,7 @@ import { apiBaseUrl } from './constants';
 import * as polka from 'polka';
 import { TokenManager } from './TokenManager';
 
-export const authenticate = () => {
+export const authenticate = (fn: () => void) => {
   const app = polka();
 
   app.get(`/auth/:token`, async (req, res) => {
@@ -16,9 +16,11 @@ export const authenticate = () => {
 
     await TokenManager.setToken(token);
 
+    fn();
     res.end(`<h1>Auth was successful, you can close this now</h1>`);
     (app as any).server?.close();
   });
+
   app.listen(54321, (err: Error) => {
     if (err) {
       vscode.window.showErrorMessage(err.message);
@@ -29,8 +31,8 @@ export const authenticate = () => {
       );
     }
   });
-  vscode.commands.executeCommand(
-    'vscode.open',
-    vscode.Uri.parse(`${apiBaseUrl}/auth/github/`)
+  // vscode.commands.executeCommand(
+  //   'vscode.open',
+  //   vscode.Uri.parse(`${apiBaseUrl}/auth/github/`)
   );
 };
