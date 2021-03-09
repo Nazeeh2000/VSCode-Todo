@@ -82,7 +82,10 @@ const main = async () => {
   );
 
   app.get('/todo', isAuth, async (req: any, res) => {
-    const todos = await Todo.find({ where: { creatorId: req.userId }, order: {id: 'DESC'} });
+    const todos = await Todo.find({
+      where: { creatorId: req.userId },
+      order: { id: 'DESC' },
+    });
     res.send({ todos });
   });
 
@@ -92,6 +95,19 @@ const main = async () => {
       text: req.body.text,
       creatorId: req.userId,
     }).save();
+    res.send({ todo });
+  });
+
+  app.put('/todo', isAuth, async (req: any, res) => {
+    const todo = await Todo.findOne(req.body.id);
+
+    if(!todo) {
+      res.send({ todo: null})
+      return
+    }
+
+    todo.completed = !todo.completed
+    await todo.save()
     res.send({ todo });
   });
 
