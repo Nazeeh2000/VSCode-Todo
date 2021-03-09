@@ -38,7 +38,7 @@
 {#if loading}
   <div>loading...</div>
 {:else if user}
-  <Todos user={user} />
+  <Todos {user} {accessToken} />
   <button
     on:click={() => {
       accessToken = ''

@@ -9,6 +9,8 @@ import { Strategy as GitHubStrategy } from 'passport-github';
 import passport from 'passport';
 import jwt from 'jsonwebtoken';
 import cors from 'cors';
+import { Todo } from './entities/Todo';
+import { isAuth, ReqWithUserId } from './isAuth';
 
 const main = async () => {
   await createConnection({
@@ -29,6 +31,7 @@ const main = async () => {
   const app = express();
   app.use(cors({ origin: '*' }));
   app.use(passport.initialize());
+  app.use(express.json());
 
   passport.serializeUser((user: any, done) => {
     done(null, user.accessToken);
@@ -78,6 +81,20 @@ const main = async () => {
     }
   );
 
+  app.get('/todo', isAuth, async (req: any, res) => {
+    const todos = await Todo.find({ where: { creatorId: req.userId }, order: {id: 'DESC'} });
+    res.send({ todos });
+  });
+
+  app.post('/todo', isAuth, async (req: any, res) => {
+    // console.log(req.body);
+    const todo = await Todo.create({
+      text: req.body.text,
+      creatorId: req.userId,
+    }).save();
+    res.send({ todo });
+  });
+
   app.get('/me', async (req, res) => {
     // Bearer sjdkjkfdjlkkn
     const authHeader = req.headers.authorization;
@@ -96,10 +113,7 @@ const main = async () => {
 
     let userId = '';
     try {
-      const payload: any = jwt.verify(
-        token, 
-        process.env.ACCESS_TOKEN_SECRET
-        );
+      const payload: any = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
       userId = payload.userId;
     } catch (e) {
       console.log(e);
