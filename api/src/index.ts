@@ -10,7 +10,7 @@ import passport from 'passport';
 import jwt from 'jsonwebtoken';
 import cors from 'cors';
 import { Todo } from './entities/Todo';
-import { isAuth, ReqWithUserId } from './isAuth';
+import { isAuth } from './isAuth';
 
 const main = async () => {
   await createConnection({
@@ -101,13 +101,16 @@ const main = async () => {
   app.put('/todo', isAuth, async (req: any, res) => {
     const todo = await Todo.findOne(req.body.id);
 
-    if(!todo) {
-      res.send({ todo: null})
-      return
+    if (!todo) {
+      res.send({ todo: null });
+      return;
     }
 
-    todo.completed = !todo.completed
-    await todo.save()
+    if (todo.creatorId !== req.userId) {
+      throw new Error('Not authorized');
+    }
+    todo.completed = !todo.completed;
+    await todo.save();
     res.send({ todo });
   });
 

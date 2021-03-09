@@ -4,9 +4,23 @@
   import Todos from './Todos.svelte';
 
   let todos: Array<{ text: String; completed: boolean }> = [];
-  let text = '';
+  let text: string = tsvscode.getState()?.text || '';
   let user: User | null = null;
   let loading = true;
+  let page: 'todos' | 'contact' = tsvscode.getState()?.page || 'todos';
+
+  $: {
+    tsvscode.setState({ page, ...tsvscode.getState()?.text });
+  }
+
+  $: {
+    tsvscode.setState({ text, ...tsvscode.getState()?.page });
+  }
+
+
+  // $: {
+  //   tsvscode.setState({ ...tsvscode.getState(), text });
+  // }
 
   let accessToken = '';
 
@@ -38,11 +52,27 @@
 {#if loading}
   <div>loading...</div>
 {:else if user}
-  <Todos {user} {accessToken} />
+  {#if page === 'todos'}
+    <Todos {user} {accessToken} />
+    <button
+      on:click={() => {
+        page = 'contact';
+      }}>Go to Contact</button
+    >
+  {:else}
+    <div>
+      Contact me:
+      <button
+        on:click={() => {
+          page = 'todos';
+        }}>Go back</button
+      >
+    </div>
+  {/if}
   <button
     on:click={() => {
-      accessToken = ''
-      user = null
+      accessToken = '';
+      user = null;
       tsvscode.postMessage({ type: 'logout', value: undefined });
       console.log('Logout clicked');
     }}>logout</button
