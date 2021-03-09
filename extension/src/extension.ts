@@ -1,12 +1,19 @@
 import * as vscode from 'vscode';
+import { authenticate } from './authenticate';
 import { HelloWorldPanel } from './HelloWorldPanel';
 import { SidebarProvider } from './SidebarProvider';
+import { TokenManager } from './TokenManager';
 
 export function activate(context: vscode.ExtensionContext) {
   // console.log('Congratulations, your extension "vstodo" is now active!');
 
-  const item = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right);
-  item.text = "$(add) Add todo";
+  TokenManager.globalState = context.globalState;
+  
+
+  const item = vscode.window.createStatusBarItem(
+    vscode.StatusBarAlignment.Right
+  );
+  item.text = '$(add) Add todo';
   item.command = 'vstodo.addTodo';
   item.show();
 
@@ -17,7 +24,18 @@ export function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(
     vscode.commands.registerCommand('vstodo.helloWorld', () => {
-      HelloWorldPanel.createOrShow(context.extensionUri);
+      vscode.window.showInformationMessage('token value is: ' + TokenManager.getToken());
+      // HelloWorldPanel.createOrShow(context.extensionUri);
+    })
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand('vstodo.authenticate', () => {
+      try {
+        authenticate();
+      } catch (err) {
+        console.log(err);
+      }
     })
   );
 

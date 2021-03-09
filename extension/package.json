@@ -14,30 +14,31 @@
 		"onCommand:vstodo.askQuestion",
 		"onCommand:vstodo.refresh",
 		"onCommand:vstodo.addTodo",
+		"onCommand:vstodo.authenticate",
 		"onView:vstodo-sidebar"
 	],
 	"main": "./dist/extension.js",
 	"contributes": {
 		"viewsContainers": {
-      "activitybar": [
-        {
-          "id": "vstodo-sidebar-view",
-          "title": "VSTodo",
-          "icon": "media/tasklist.svg"
-        }
-      ]
-    },
-    "views": {
-      "vstodo-sidebar-view": [
-        {
-          "type": "webview",
-          "id": "vstodo-sidebar",
-          "name": "VSTodo",
-          "icon": "media/tasklist.svg",
-          "contextualTitle": "VSTodo"
-        }
-      ]
-    },
+			"activitybar": [
+				{
+					"id": "vstodo-sidebar-view",
+					"title": "VSTodo",
+					"icon": "media/tasklist.svg"
+				}
+			]
+		},
+		"views": {
+			"vstodo-sidebar-view": [
+				{
+					"type": "webview",
+					"id": "vstodo-sidebar",
+					"name": "VSTodo",
+					"icon": "media/tasklist.svg",
+					"contextualTitle": "VSTodo"
+				}
+			]
+		},
 		"commands": [
 			{
 				"command": "vstodo.helloWorld",
@@ -57,6 +58,11 @@
 				"command": "vstodo.addTodo",
 				"category": "VSTodo",
 				"title": "Add Todo from Selection"
+			},
+			{
+				"command": "vstodo.authenticate",
+				"category": "VSTodo",
+				"title": "Authenticate"
 			}
 		]
 	},
@@ -92,8 +98,10 @@
 		"@rollup/plugin-node-resolve": "^11.2.0",
 		"@rollup/plugin-typescript": "^8.2.0",
 		"@tsconfig/svelte": "^1.0.10",
+		"@types/polka": "^0.5.2",
 		"concurrently": "^6.0.0",
 		"fs": "^0.0.1-security",
+		"polka": "^0.5.2",
 		"rollup-plugin-svelte": "^6.0.0",
 		"rollup-plugin-terser": "^7.0.2",
 		"svelte": "^3.35.0",

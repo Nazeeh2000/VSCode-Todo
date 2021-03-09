@@ -66,7 +66,7 @@ const main = async () => {
     passport.authenticate('github', { session: false }),
     (req: any, res) => {
       // Successful authentication, redirect home.
-      res.redirect(`http://localhost:54321/auth${req.user.accessToken}`)
+      res.redirect(`http://localhost:54321/auth/${req.user.accessToken}`)
     }
   );
 
