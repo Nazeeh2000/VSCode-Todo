@@ -8,7 +8,7 @@ import { User } from './entities/User';
 import { Strategy as GitHubStrategy } from 'passport-github';
 import passport from 'passport';
 import jwt from 'jsonwebtoken';
-import { runInNewContext } from 'node:vm';
+import cors from 'cors';
 
 const main = async () => {
   await createConnection({
@@ -27,7 +27,7 @@ const main = async () => {
   // console.log({ user });
 
   const app = express();
-
+  app.use(cors({ origin: '*' }));
   app.use(passport.initialize());
 
   passport.serializeUser((user: any, done) => {
@@ -47,13 +47,21 @@ const main = async () => {
           user.name = profile.displayName;
           await user.save();
         } else {
-          user = await User.create({ name: profile.displayName, githubId: profile.id }).save();
+          user = await User.create({
+            name: profile.displayName,
+            githubId: profile.id,
+          }).save();
         }
 
         cb(null, {
-          accessToken: jwt.sign({ userId: user.id }, 'sbjdksudjhid', {
-            expiresIn: '1y',
-          }),
+          accessToken: jwt.sign(
+            { userId: user.id },
+            process.env.ACCESS_TOKEN_SECRET,
+            // 'sdhbjshj',
+            {
+              expiresIn: '1y',
+            }
+          ),
         });
       }
     )
@@ -66,9 +74,45 @@ const main = async () => {
     passport.authenticate('github', { session: false }),
     (req: any, res) => {
       // Successful authentication, redirect home.
-      res.redirect(`http://localhost:54321/auth/${req.user.accessToken}`)
+      res.redirect(`http://localhost:54321/auth/${req.user.accessToken}`);
     }
   );
+
+  app.get('/me', async (req, res) => {
+    // Bearer sjdkjkfdjlkkn
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader) {
+      res.send({ user: null });
+      return;
+    }
+
+    const token = authHeader?.split(' ')[1];
+
+    if (!token) {
+      res.send({ user: null });
+      return;
+    }
+
+    let userId = '';
+    try {
+      const payload: any = jwt.verify(
+        token, 
+        process.env.ACCESS_TOKEN_SECRET
+        );
+      userId = payload.userId;
+    } catch (e) {
+      console.log(e);
+    }
+
+    if (!userId) {
+      res.send({ user: null });
+      return;
+    }
+
+    const user = await User.findOne(userId);
+    res.send({ user });
+  });
 
   app.get('/', (_req, res) => {
     res.send('hello');

@@ -1,5 +1,7 @@
-import * as vscode from "vscode";
-import { getNonce } from "./getNonce";
+import * as vscode from 'vscode';
+import { apiBaseUrl } from './constants';
+import { getNonce } from './getNonce';
+import { TokenManager } from './TokenManager';
 
 export class SidebarProvider implements vscode.WebviewViewProvider {
   _view?: vscode.WebviewView;
@@ -21,15 +23,14 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
     webviewView.webview.onDidReceiveMessage(async (data) => {
       switch (data.type) {
-        
-        case "onInfo": {
+        case 'onInfo': {
           if (!data.value) {
             return;
           }
           vscode.window.showInformationMessage(data.value);
           break;
         }
-        case "onError": {
+        case 'onError': {
           if (!data.value) {
             return;
           }
@@ -46,16 +47,16 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
   private _getHtmlForWebview(webview: vscode.Webview) {
     const styleResetUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this._extensionUri, "media", "reset.css")
+      vscode.Uri.joinPath(this._extensionUri, 'media', 'reset.css')
     );
     const scriptUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this._extensionUri, "out", "compiled/sidebar.js")
+      vscode.Uri.joinPath(this._extensionUri, 'out', 'compiled/sidebar.js')
     );
     const styleMainUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this._extensionUri, "out", "compiled/sidebar.css")
+      vscode.Uri.joinPath(this._extensionUri, 'out', 'compiled/sidebar.css')
     );
     const styleVSCodeUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this._extensionUri, "media", "vscode.css")
+      vscode.Uri.joinPath(this._extensionUri, 'media', 'vscode.css')
     );
 
     // Use a nonce to only allow a specific script to be run.
@@ -70,8 +71,8 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 					and only allow scripts that have a specific nonce.
         -->
         <meta http-equiv="Content-Security-Policy" content="img-src https: data:; style-src 'unsafe-inline' ${
-      webview.cspSource
-    }; script-src 'nonce-${nonce}';">
+          webview.cspSource
+        }; script-src 'nonce-${nonce}';">
 				<meta name="viewport" content="width=device-width, initial-scale=1.0">
 				<link href="${styleResetUri}" rel="stylesheet">
 				<link href="${styleVSCodeUri}" rel="stylesheet">
@@ -79,6 +80,8 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
 
         <script nonce="${nonce}">
         const tsvscode = acquireVsCodeApi();
+        const apiBaseUrl = ${JSON.stringify(apiBaseUrl)}
+        const accessToken = ${JSON.stringify(TokenManager.getToken())}
         </script>
 			</head>
       <body>

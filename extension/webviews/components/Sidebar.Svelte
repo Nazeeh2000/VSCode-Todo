@@ -1,28 +1,44 @@
 <script lang="ts">
-import { onMount } from "svelte";
+  import { onMount } from 'svelte';
 
-
-  
   let todos: Array<{ text: String; completed: boolean }> = [];
   let text = '';
+  let user: { name: string; id: number } | null = null;
+  let loading = true;
 
-  onMount( async () => {
-    window.addEventListener('message', event => {
-      const message = event.data
+  onMount(async () => {
+    window.addEventListener('message', (event) => {
+      const message = event.data;
 
       switch (message.type) {
-        case "new-todo":
-          todos = [{text: message.value, completed: false }, ...todos]
+        case 'new-todo':
+          todos = [{ text: message.value, completed: false }, ...todos];
           break;
-      
+
         default:
           break;
       }
-    })
+    });
+
+    const response = await fetch(`${apiBaseUrl}/me`, {
+      headers: {
+        authorization: `Bearer ${accessToken}`
+      }
+    });
+    const data = await response.json();
+    user = data.user;
+    loading = false;
     return;
-  })
+  });
 </script>
 
+{#if loading}
+  <div>loading...</div>
+{:else if user}
+  <pre>{JSON.stringify(user, null, 2)}</pre>
+{:else}
+  <div>no user is logged in</div>
+{/if}
 <form
   on:submit|preventDefault={(e) => {
     todos = [{ text, completed: false }, ...todos];
