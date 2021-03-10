@@ -15,10 +15,10 @@ import { isAuth } from './isAuth';
 const main = async () => {
   await createConnection({
     type: 'postgres',
-    database: 'vstodo',
+    database: process.env.DATABASE_NAME,
     // dropSchema: true,
-    username: 'postgres',
-    password: '5616',
+    username: process.env.DATABASE_USERNAME,
+    password: process.env.DATABASE_PASSWORD,
     entities: [join(__dirname, './entities/*.*')],
     logging: !__prod__,
     synchronize: !__prod__,
