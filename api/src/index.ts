@@ -15,10 +15,18 @@ import { isAuth } from './isAuth';
 const main = async () => {
   await createConnection({
     type: 'postgres',
-    database: process.env.DATABASE_NAME,
     // dropSchema: true,
+    database: process.env.DATABASE_NAME,
+    host: process.env.DATABASE_HOST,
     username: process.env.DATABASE_USERNAME,
     password: process.env.DATABASE_PASSWORD,
+    url: process.env.DATABASE_URL,
+    ssl: {
+      rejectUnauthorized: false
+    },
+    // database: 'vstodo',
+    // username: 'postgres',
+    // password: '5616',
     entities: [join(__dirname, './entities/*.*')],
     logging: !__prod__,
     synchronize: !__prod__,
@@ -42,6 +50,7 @@ const main = async () => {
       {
         clientID: process.env.GITHUB_CLIENT_ID,
         clientSecret: process.env.GITHUB_CLIENT_SECRET,
+        // callbackURL: 'http://postgres://hgiueknkwealkg:6a382a99f911a05dfdfda03a1b239e5cfc1d8c044554006db43dd816343be0ce@ec2-54-145-102-149.compute-1.amazonaws.com:5432/d8eh5hft7lpmrp/auth/github/callback',
         callbackURL: 'http://localhost:3002/auth/github/callback',
       },
       async (_: any, __: any, profile: any, cb: any) => {
@@ -150,6 +159,9 @@ const main = async () => {
   app.get('/', (_req, res) => {
     res.send('hello');
   });
+  // app.listen(parseInt(process.env.PORT), () => {
+  //   console.log(`Listening on port ${process.env.PORT}`);
+  // });
   app.listen(3002, () => {
     console.log('Listening on port 3002');
   });
