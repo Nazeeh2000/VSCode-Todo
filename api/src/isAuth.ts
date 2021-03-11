@@ -15,6 +15,7 @@ export const isAuth: RequestHandler<{}, any, any, {}> = (req, _, next) => {
   }
 
   try {
+    // @ts-ignore
     const payload: any = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
     req.userId = payload.userId;
     next();
