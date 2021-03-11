@@ -48,7 +48,9 @@ const main = async () => {
   passport.use(
     new GitHubStrategy(
       {
+        // @ts-ignore
         clientID: process.env.GITHUB_CLIENT_ID,
+        // @ts-ignore
         clientSecret: process.env.GITHUB_CLIENT_SECRET,
         // callbackURL: 'http://postgres://hgiueknkwealkg:6a382a99f911a05dfdfda03a1b239e5cfc1d8c044554006db43dd816343be0ce@ec2-54-145-102-149.compute-1.amazonaws.com:5432/d8eh5hft7lpmrp/auth/github/callback',
         callbackURL: 'http://localhost:3002/auth/github/callback',
@@ -68,6 +70,7 @@ const main = async () => {
         cb(null, {
           accessToken: jwt.sign(
             { userId: user.id },
+            // @ts-ignore
             process.env.ACCESS_TOKEN_SECRET,
             // 'sdhbjshj',
             {
@@ -141,6 +144,7 @@ const main = async () => {
 
     let userId = '';
     try {
+      // @ts-ignore
       const payload: any = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
       userId = payload.userId;
     } catch (e) {

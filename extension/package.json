@@ -2,7 +2,7 @@
 	"name": "vstodo",
 	"displayName": "VSTodo",
 	"description": "Keeping track of stuff",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"publisher": "NazeehVahora",
 	"engines": {
 		"vscode": "^1.53.0"
