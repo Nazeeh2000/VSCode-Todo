@@ -126,6 +126,23 @@ const main = async () => {
     res.send({ todo });
   });
 
+  // Delete todo code
+  app.put('/todo-delete', isAuth, async (req, res) => {
+    const todo = await Todo.findOne(req.body.id);
+
+    if (!todo) {
+      res.send({ todo: null });
+      return;
+    }
+
+    if (todo.creatorId !== req.userId) {
+      throw new Error('Not authorized');
+    }
+    // todo.completed = !todo.completed;
+    await Todo.delete(req.body.id);
+    res.send({ deleted: true });
+  });
+
   app.get('/me', async (req, res) => {
     // Bearer sjdkjkfdjlkkn
     const authHeader = req.headers.authorization;
