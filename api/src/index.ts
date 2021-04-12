@@ -49,11 +49,12 @@ const main = async () => {
     new GitHubStrategy(
       {
         // @ts-ignore
-        clientID: process.env.GITHUB_CLIENT_ID,
+        clientID: process.env.GITHUB_CLIENT_ID_PROD,
         // @ts-ignore
-        clientSecret: process.env.GITHUB_CLIENT_SECRET,
+        clientSecret: process.env.GITHUB_CLIENT_SECRET_PROD,
         // callbackURL: 'http://postgres://hgiueknkwealkg:6a382a99f911a05dfdfda03a1b239e5cfc1d8c044554006db43dd816343be0ce@ec2-54-145-102-149.compute-1.amazonaws.com:5432/d8eh5hft7lpmrp/auth/github/callback',
-        callbackURL: `http://${process.env.DATABASE_URL}/auth/github/callback`
+        // callbackURL: `http://${process.env.DATABASE_URL}/auth/github/callback`
+        callbackURL: 'https://fast-temple-05523.herokuapp.com/auth/github/callback'
         // callbackURL: 'http://localhost:3002/auth/github/callback',
       },
       async (_: any, __: any, profile: any, cb: any) => {
