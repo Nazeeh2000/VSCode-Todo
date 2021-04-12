@@ -53,7 +53,8 @@ const main = async () => {
         // @ts-ignore
         clientSecret: process.env.GITHUB_CLIENT_SECRET,
         // callbackURL: 'http://postgres://hgiueknkwealkg:6a382a99f911a05dfdfda03a1b239e5cfc1d8c044554006db43dd816343be0ce@ec2-54-145-102-149.compute-1.amazonaws.com:5432/d8eh5hft7lpmrp/auth/github/callback',
-        callbackURL: 'http://localhost:3002/auth/github/callback',
+        callbackURL: `http://${process.env.DATABASE_URL}/auth/github/callback`
+        // callbackURL: 'http://localhost:3002/auth/github/callback',
       },
       async (_: any, __: any, profile: any, cb: any) => {
         let user = await User.findOne({ where: { githubId: profile.id } });
@@ -180,12 +181,13 @@ const main = async () => {
   app.get('/', (_req, res) => {
     res.send('hello');
   });
-  // app.listen(parseInt(process.env.PORT), () => {
-  //   console.log(`Listening on port ${process.env.PORT}`);
-  // });
-  app.listen(3002, () => {
-    console.log('Listening on port 3002');
+
+  app.listen(parseInt(process.env.PORT!), () => {
+    console.log(`Listening on port ${process.env.PORT}`);
   });
+  // app.listen(3002, () => {
+  //   console.log('Listening on port 3002');
+  // });
 };
 
 main();
