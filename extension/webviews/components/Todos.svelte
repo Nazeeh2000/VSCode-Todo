@@ -61,7 +61,7 @@
 <ul>
   {#each todos as todo (todo.id)}
     <li style='display: flex; flex-direction: row; justify-content: space-between; margin-top: 1vh;'>
-      <div style='display: block;' class:complete={todo.completed}
+      <div style='display: block; max-width: 40vw' class:complete={todo.completed}
       on:click={async () => {
         todo.completed = !todo.completed;
         const response = await fetch(`${apiBaseUrl}/todo`, {
